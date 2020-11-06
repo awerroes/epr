@@ -4,7 +4,7 @@ filename = '/home/jazon/project/epr/data/raw/test_data/testB.csv'
 
 def open_spectre(filename):
 
-    """Check row structure amd return x amd y vals as lists"""
+    """Check row structure amd return x amd y vals as tuple"""
 
     with open(filename, newline='') as f:
         reader = csv.reader(f, delimiter = "\t")
@@ -15,7 +15,9 @@ def open_spectre(filename):
                 if ((type(float(row[0])) is float) and (type(float(row[1])) is float)):
                     wavelength.append(float(row[0]))
                     value.append(float(row[1]))
-            except:
-                continue
+            except IOError:
+                print("Plik {} nie jest poprawnie obsługiwany".format(filename))
+                #continue
+                
     # sortowanie?
     return wavelength, value
