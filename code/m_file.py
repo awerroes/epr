@@ -1,28 +1,33 @@
 import os
-
 import csv
-
 import magic
 
 #filename = '/home/jazon/project/epr/data/raw/test_data/testB.csv'
 
 def open_spectre(filename):
-
-    """Check row structure amd return x amd y vals as lists"""
-
+    """Otwiera plik z danymi potrzebnymi do sporzadzenia wykresu"""
     with open(filename, newline='') as f:
         reader = csv.reader(f, delimiter = "\t")
+        spectre = []
         wavelength = []
         value = []
         for row in reader:
             try:   
                 if ((type(float(row[0])) is float) and (type(float(row[1])) is float)):
-                    wavelength.append(float(row[0]))
-                    value.append(float(row[1]))
-            except:
+                    spectre.append(row)
+                    #wavelength.append(float(row[0]))
+                    #value.append(float(row[1]))
+            except ValueError:
+                print(f"Niepoprawny plik: {filename}".filename)
+            finally:
                 continue
-    # sortowanie?
+    
+    spectre.sort(key = lambda x: x[0])
+    wavelength = [float(item[0]) for item in spectre]
+    value = [float(item[1]) for item in spectre]
+    
     return wavelength, value
+
 
 
 import matplotlib
@@ -68,12 +73,22 @@ result = {'minimum': 228.0,
 
 path = '/home/jazon/project/epr/data/raw/test_data'
 
-os.chdir(path) 
-     
-for filename in os.listdir():
-    print(filename)
-    if magic.from_file(filename, mime=True) == 'text/plain':
-        open_spectre(filename)
-        draw_plot(open_spectre(filename)[0], open_spectre(filename)[1], result, filename)
-    else:
-        continue
+def check_location(path):
+    docstring_ornament = '###------------------------------------###'
+    try:
+        os.chdir(path)
+        return True
+    except IOError:
+        print(docstring_ornament)
+        print("Sprawdz polozenie plikow.")
+        print(docstring_ornament)
+        return False
+
+if check_location(path):
+    for filename in os.listdir():
+        #print(filename)
+        if magic.from_file(filename, mime=True) == 'text/plain':
+            data = open_spectre(filename)
+            draw_plot(data[0], data[1], result, filename)
+        else:
+            continue
