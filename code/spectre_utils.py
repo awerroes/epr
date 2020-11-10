@@ -71,4 +71,29 @@ def check_location(path):
         print(docstring_ornament)
         print("Sprawdz polozenie plikow.")
         print(docstring_ornament)
+        #return ValueError("window_size and order have to be of type int")
+        return False
+
+def analyse_dpph(value):
+
+    try:
+        amplitude = max(value) - min(value)
+        return {'minimum': min(value),
+                'maximum': max(value),
+                'amplitude': amplitude}
+    except:
+        raise ValueError("Lista wartosci jest pusta!")
+
+import magic
+
+def istextfile(filename):
+
+    """Sprawdza czy element folderu jest plikiem tekstowym"""
+    
+    if os.path.isfile(filename):
+        if magic.from_file(filename, mime=True) == 'text/plain':
+            return True
+        else:
+            return False
+    else:
         return False
